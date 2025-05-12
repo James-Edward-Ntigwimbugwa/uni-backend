@@ -23,6 +23,7 @@ class RegisterView(APIView):
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginView(APIView):
     def post(self, request):
         # Support both email and username for login
@@ -62,6 +63,7 @@ class LoginView(APIView):
             },
             status=status.HTTP_200_OK
         )
+        
 
 
 class ChangePasswordView(APIView):
