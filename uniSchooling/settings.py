@@ -40,8 +40,8 @@ INSTALLED_APPS = [
 
     # all other installed apps
     'users',
-    'rest_framework'
-    
+    'rest_framework',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = { 
@@ -59,11 +59,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'https://yourdomain.com',
+]
 
 ROOT_URLCONF = 'uniSchooling.urls'
 

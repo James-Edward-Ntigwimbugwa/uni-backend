@@ -11,12 +11,16 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
             return Response({
                 "error": False,
-                "message": "Registered successfully"
+                "message": "Registered successfully",
+                "data": {
+                    "id": user.id,
+                    "username": user.username
+                }
             }, status=status.HTTP_201_CREATED)
-            
+
         return Response({
             "error": True,
             "message": "Registration failed",
