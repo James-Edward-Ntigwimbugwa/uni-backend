@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # all other installed apps
     'users',
+    'academics',
     'rest_framework',
     'corsheaders',
 ]
@@ -66,7 +67,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
+    'http://127.0.0.1:8000',
     'https://yourdomain.com',
 ]
 
@@ -131,7 +132,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'uni_schooling',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'ntigwimbugwa2001',
         'HOST': 'localhost',  
         'PORT': '3306',     
     }
@@ -181,9 +182,8 @@ AUTH_USER_MODEL = 'users.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
-    'users.backends.EmailBackend',
+    'users.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'users.backends.UsernameBackend',    
 ]
 
 

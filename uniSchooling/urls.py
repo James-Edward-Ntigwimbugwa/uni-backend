@@ -18,12 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/' ,include('users.urls') ),
-    path('api/login/' ,include('users.urls') ),
-    path('api/register/' ,include('users.urls') ),
+    path('api/academics/', include('academics.urls')),
+    path('api/auth/' ,include('users.urls')),
 ]
 
 if settings.DEBUG:
