@@ -1,15 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import ChangePasswordSerializer, ProfilePhotoSerializer, UserSerializer
+from .serializers import ChangePasswordSerializer, ProfilePhotoSerializer, RegisterSerializer , MessageSerializer
 from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import Message 
 
 class RegisterView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             return Response({
@@ -116,3 +117,43 @@ class ProfilePhotoView(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class MessageView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        serializer = MessageSerializer(data=request.data)
+        if serializer.is_valid():
+            if not request.user.is_staff:
+                return Response({
+                    "error": True,
+                    "message": "Only staff users can send messages"
+                }, status=status.HTTP_403_FORBIDDEN)
+            message = serializer.save()
+            return Response({
+                "error": False,
+                "message": "Message sent successfully",
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({
+            "error": True,
+            "message": "Message sending failed",
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+class MessageListView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        try:
+            messages = Message.objects.all().order_by('-sent_at')
+            return Response(MessageSerializer(messages, many=True).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "error": True,
+                "message": "Failed to retrieve messages",
+                "details": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

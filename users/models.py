@@ -77,3 +77,15 @@ class StaffProfile(models.Model):
     staff_id = models.CharField(max_length=20, unique=True)
     department = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
+    
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    # No recipient field; messages are visible to all users
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    sent_at = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.sender} to {self.recipient} - {self.subject}"

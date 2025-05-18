@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from .models import Message
  
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     username = serializers.CharField(required=False, allow_blank=True)
 
@@ -51,3 +52,12 @@ class ProfilePhotoSerializer(serializers.ModelSerializer):
         instance.profile_photo = validated_data.get('profile_photo', instance.profile_photo)
         instance.save()
         return instance
+    
+class MessageSerializer(serializers.Serializer):
+    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_staff=True))
+    # No recipient field needed, as all users can see the message
+    body = serializers.CharField()
+    sent_at = serializers.DateTimeField(read_only=True)
+    
+    def create(self, validated_data):
+        return Message.objects.create(**validated_data)
