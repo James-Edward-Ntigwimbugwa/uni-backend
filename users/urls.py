@@ -9,3 +9,4 @@ urlpatterns = [
     path('send-message/' , MessageView.as_view(), name='send-message' ),
     path("messages/", MessageListView.as_view(), name="message-list")
 ]
+

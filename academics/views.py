@@ -10,7 +10,6 @@ from .serializers import (
     StudentCourseEnrollmentSerializer
 )
 
-
 class DepartmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for university departments
