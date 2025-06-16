@@ -132,7 +132,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'uni_schooling',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'ntigwimbugwa2001',
         'HOST': 'localhost',  
         'PORT': '3306',     
     }
