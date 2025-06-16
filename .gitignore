@@ -8,3 +8,7 @@ migrations/__pycache__/
 
 # migration files
 migrations/0*.py
+
+
+# media files
+media/*
