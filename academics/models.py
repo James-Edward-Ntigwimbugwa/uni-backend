@@ -125,7 +125,7 @@ class CourseDocument(models.Model):
                 'gif': 'gif',
             }
             self.document_type = ext_mapping.get(ext, 'other')
-            
+        
             # Set file size
             if hasattr(self.file, 'size'):
                 self.file_size = self.file.size
