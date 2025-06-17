@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from .models import Department, Course, CourseDocument, StudentCourseEnrollment
 from .serializers import (
@@ -84,17 +85,21 @@ class CourseDocumentViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'document_type', 'course__title']
     ordering_fields = ['title', 'document_type', 'uploaded_at']
     
+    # ...existing code...
+
     def get_queryset(self):
-        queryset = super().get_queryset()
         course_id = self.request.query_params.get('course')
-        document_type = self.request.query_params.get('type')
+        if not course_id:
+            # Only allow searching when course is specified
+            raise ValidationError({"error": "course query parameter is required"})
         
-        if course_id:
-            queryset = queryset.filter(course_id=course_id)
+        queryset = super().get_queryset().filter(course_id=course_id)
+        document_type = self.request.query_params.get('type')
         if document_type:
             queryset = queryset.filter(document_type=document_type)
-            
         return queryset
+
+# ...existing code...
     
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user)
