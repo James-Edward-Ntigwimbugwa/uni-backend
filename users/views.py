@@ -125,15 +125,16 @@ class MessageView(APIView):
     def post(self, request):
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
-            if not request.user.is_staff:
-                return Response({
-                    "error": True,
-                    "message": "Only staff users can send messages"
-                }, status=status.HTTP_403_FORBIDDEN)
-            message = serializer.save()
+            # Both staff and students can send messages
+            message = serializer.save(sender=request.user)
             return Response({
                 "error": False,
                 "message": "Message sent successfully",
+                "data": {
+                    "id": message.id,
+                    "subject": message.subject,
+                    "sent_at": message.sent_at
+                }
             }, status=status.HTTP_201_CREATED)
 
         return Response({
@@ -150,7 +151,12 @@ class MessageListView(APIView):
     def get(self, request):
         try:
             messages = Message.objects.all().order_by('-sent_at')
-            return Response(MessageSerializer(messages, many=True).data, status=status.HTTP_200_OK)
+            serializer = MessageSerializer(messages, many=True)
+            return Response({
+                "error": False,
+                "message": "Messages retrieved successfully",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({
                 "error": True,

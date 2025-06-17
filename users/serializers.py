@@ -53,11 +53,16 @@ class ProfilePhotoSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
-class MessageSerializer(serializers.Serializer):
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_staff=True))
-    # No recipient field needed, as all users can see the message
-    body = serializers.CharField()
-    sent_at = serializers.DateTimeField(read_only=True)
+class MessageSerializer(serializers.ModelSerializer):
+    sender_name = serializers.CharField(source='sender.get_full_name', read_only=True)
+    sender_email = serializers.CharField(source='sender.email', read_only=True)
+    
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'sender_name', 'sender_email', 'subject', 'body', 'sent_at', 'is_read']
+        read_only_fields = ['id', 'sender', 'sent_at', 'sender_name', 'sender_email']
     
     def create(self, validated_data):
+        # Remove sender from validated_data as it will be set in the view
+        validated_data.pop('sender', None)
         return Message.objects.create(**validated_data)
