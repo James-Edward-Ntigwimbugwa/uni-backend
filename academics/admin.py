@@ -32,16 +32,16 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'course_code', 'department', 'document_count', 'created_at')
+    list_display = ('title', 'module_code', 'department', 'document_count', 'created_at')
     list_filter = ('department', 'created_at')
-    search_fields = ('title', 'course_code', 'description')
+    search_fields = ('title', 'module_code', 'description')
     autocomplete_fields = ('department',)
     readonly_fields = ('created_at', 'updated_at')
     inlines = [CourseDocumentInline]
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'course_code', 'department', 'description')
+            'fields': ('title', 'module_code', 'department', 'description')
         }),
         ('Display Settings', {
             'fields': ('icon_name', 'color_code'),
@@ -66,7 +66,7 @@ class CourseAdmin(admin.ModelAdmin):
 class CourseDocumentAdmin(admin.ModelAdmin):
     list_display = ('title', 'course', 'document_type', 'file_size_display', 'uploaded_by', 'is_active', 'uploaded_at')
     list_filter = ('document_type', 'is_active', 'course__department', 'uploaded_at')
-    search_fields = ('title', 'description', 'course__title', 'course__course_code')
+    search_fields = ('title', 'description', 'course__title', 'module_code')
     autocomplete_fields = ('course', 'uploaded_by')
     readonly_fields = ('document_type', 'uploaded_by', 'uploaded_at', 'updated_at', 'file_size', 'file_preview')
     list_editable = ('is_active',)
@@ -129,7 +129,7 @@ class CourseDocumentAdmin(admin.ModelAdmin):
 class StudentCourseEnrollmentAdmin(admin.ModelAdmin):
     list_display = ('student', 'course', 'course_department', 'enrolled_at', 'is_active')
     list_filter = ('is_active', 'enrolled_at', 'course__department')
-    search_fields = ('student__username', 'student__email', 'course__title', 'course__course_code')
+    search_fields = ('student__username', 'student__email', 'course__title', 'course__module_code')
     autocomplete_fields = ('student', 'course')
     readonly_fields = ('enrolled_at',)
     

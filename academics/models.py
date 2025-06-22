@@ -12,9 +12,9 @@ def get_upload_path(instance, filename):
     # Get file extension
     ext = filename.split('.')[-1]
     # Create filename with course code and original name
-    filename = f"{instance.course.course_code}_{slugify(instance.title)}.{ext}"
+    filename = f"{instance.course.module_code}_{slugify(instance.title)}.{ext}"
     # Create path: course_documents/department_code/course_code/filename
-    return os.path.join('course_documents', instance.course.department.code, instance.course.course_code, filename)
+    return os.path.join('course_documents', instance.course.department.code, instance.course.module_code, filename)
 
 
 class Department(models.Model):
@@ -40,7 +40,7 @@ class Course(models.Model):
     Course model representing university courses like Information Technology, Railway Engineering, etc.
     """
     title = models.CharField(max_length=100)
-    course_code = models.CharField(max_length=20, unique=True)
+    module_code = models.CharField(max_length=20, unique=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='courses')
     description = models.TextField(blank=True, null=True)
     icon_name = models.CharField(max_length=50, blank=True, null=True, 
@@ -51,7 +51,7 @@ class Course(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title} ({self.course_code})"
+        return f"{self.title} ({self.module_code})"
 
     class Meta:
         ordering = ['title']

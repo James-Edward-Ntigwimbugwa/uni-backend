@@ -31,8 +31,8 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'course_code', 'department__name']
-    ordering_fields = ['title', 'course_code', 'department__name', 'created_at']
+    search_fields = ['title', 'module_code', 'department__name']
+    ordering_fields = ['title', 'module_code', 'department__name', 'created_at']
     
     def get_queryset(self):
         queryset = super().get_queryset()

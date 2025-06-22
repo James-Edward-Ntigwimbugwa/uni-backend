@@ -14,7 +14,7 @@ class Command(BaseCommand):
         # Create superuser with EMAIL and PASSWORD only
         if not User.objects.filter(email='admin@esterMollel.com').exists():
             User.objects.create_superuser(
-                email='esterMollel@gmail.com',
+                email='admin@esterMollel@gmail.com',
                 password='esterMollel2001'
             )
             self.stdout.write(self.style.SUCCESS('Superuser created'))
@@ -43,56 +43,56 @@ class Command(BaseCommand):
         courses = [
             {
                 'title': 'Information Technology',
-                'course_code': 'IT-301',
+                'module_code': 'IT-301',
                 'department': created_departments['TECH'],
                 'icon_name': 'computer_outlined',
                 'color_code': '#1E88E5',  # Colors.blue[600]
             },
             {
                 'title': 'Business Administration',
-                'course_code': 'BA-201',
+                'module_code': 'BA-201',
                 'department': created_departments['BUS'],
                 'icon_name': 'business_center',
                 'color_code': '#43A047',  # Colors.green[600]
             },
             {
                 'title': 'Human Resources',
-                'course_code': 'HR-220',
+                'module_code': 'HR-220',
                 'department': created_departments['BUS'],
                 'icon_name': 'people_alt_outlined',
                 'color_code': '#8E24AA',  # Colors.purple[600]
             },
             {
                 'title': 'Maritime Studies',
-                'course_code': 'MS-310',
+                'module_code': 'MS-310',
                 'department': created_departments['TRANS'],
                 'icon_name': 'sailing_outlined',
                 'color_code': '#1E88E5',  # Colors.blue[600]
             },
             {
                 'title': 'Railway Engineering',
-                'course_code': 'RE-250',
+                'module_code': 'RE-250',
                 'department': created_departments['TRANS'],
                 'icon_name': 'train_outlined',
                 'color_code': '#6D4C41',  # Colors.brown[600]
             },
             {
                 'title': 'Mechanical Engineering',
-                'course_code': 'ME-325',
+                'module_code': 'ME-325',
                 'department': created_departments['ENG'],
                 'icon_name': 'precision_manufacturing_outlined',
                 'color_code': '#F57C00',  # Colors.orange[600]
             },
             {
                 'title': 'Automobile Engineering',
-                'course_code': 'AE-340',
+                'module_code': 'AE-340',
                 'department': created_departments['ENG'],
                 'icon_name': 'directions_car_outlined',
                 'color_code': '#E53935',  # Colors.red[600]
             },
             {
                 'title': 'Computer Science',
-                'course_code': 'CS-301',
+                'module_code': 'CS-301',
                 'department': created_departments['TECH'],
                 'icon_name': 'code_outlined',
                 'color_code': '#3949AB',  # Colors.indigo[600]
@@ -101,7 +101,7 @@ class Command(BaseCommand):
         
         for course_data in courses:
             course, created = Course.objects.get_or_create(
-                course_code=course_data['course_code'],
+                module_code=course_data['module_code'],
                 defaults={
                     'title': course_data['title'],
                     'department': course_data['department'],

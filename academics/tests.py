@@ -27,13 +27,13 @@ class CourseModelTests(TestCase):
     def test_course_creation(self):
         course = Course.objects.create(
             title="Test Course",
-            course_code="TST-101",
+            module_code="TST-101",
             department=self.department,
             icon_name="test_icon",
             color_code="#FF5733"
         )
         self.assertEqual(course.title, "Test Course")
-        self.assertEqual(course.course_code, "TST-101")
+        self.assertEqual(course.module_code, "TST-101")
         self.assertEqual(course.department, self.department)
 
 
@@ -45,7 +45,7 @@ class DocumentModelTests(TestCase):
         )
         self.course = Course.objects.create(
             title="Test Course",
-            course_code="TST-101",
+            module_code="TST-101",
             department=self.department
         )
         self.user = User.objects.create_user(
@@ -75,7 +75,7 @@ class EnrollmentModelTests(TestCase):
         )
         self.course = Course.objects.create(
             title="Test Course",
-            course_code="TST-101",
+            module_code="TST-101",
             department=self.department
         )
         self.user = User.objects.create_user(
@@ -115,7 +115,7 @@ class APITests(TestCase):
         # Create test course
         self.course = Course.objects.create(
             title="Test Course",
-            course_code="TST-101",
+            module_code="TST-101",
             department=self.department,
             description="Test Course Description",
             icon_name="test_icon",
