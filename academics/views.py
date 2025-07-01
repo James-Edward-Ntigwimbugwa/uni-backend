@@ -3,8 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from .models import Department, Course, CourseDocument, StudentCourseEnrollment
+from .models import CourseNote, Department, Course, CourseDocument, StudentCourseEnrollment
 from .serializers import (
+    CourseNoteSerializer,
     DepartmentSerializer, 
     CourseSerializer, 
     CourseDocumentSerializer, 
@@ -85,8 +86,7 @@ class CourseDocumentViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'document_type', 'course__title']
     ordering_fields = ['title', 'document_type', 'uploaded_at']
     
-    # ...existing code...
-
+   
     def get_queryset(self):
         course_id = self.request.query_params.get('course')
         if not course_id:
@@ -98,11 +98,49 @@ class CourseDocumentViewSet(viewsets.ModelViewSet):
         if document_type:
             queryset = queryset.filter(document_type=document_type)
         return queryset
-
-# ...existing code...
     
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user)
+
+
+class CourseNoteViewSet(viewsets.ModelViewSet):
+    queryset = CourseNote.objects.filter(is_active=True)
+    serializer_class = CourseNoteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = CourseNote.objects.filter(is_active=True)
+        course_id = self.request.query_params.get('course', None)
+        category = self.request.query_params.get('category', None)
+        difficulty = self.request.query_params.get('difficulty', None)
+        
+        if course_id:
+            queryset = queryset.filter(course_id=course_id)
+        if category:
+            queryset = queryset.filter(category=category)
+        if difficulty:
+            queryset = queryset.filter(difficulty_level=difficulty)
+            
+        return queryset.order_by('order', '-created_at')
+
+    @action(detail=False, methods=['get'])
+    def featured(self, request):
+        """Get featured notes across all courses"""
+        featured_notes = CourseNote.objects.filter(is_featured=True, is_active=True)
+        serializer = self.get_serializer(featured_notes, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def by_course(self, request):
+        """Get notes grouped by course"""
+        course_id = request.query_params.get('course_id')
+        if not course_id:
+            return Response({'error': 'course_id parameter required'}, 
+                          status=status.HTTP_400_BAD_REQUEST)
+        
+        notes = CourseNote.objects.filter(course_id=course_id, is_active=True)
+        serializer = self.get_serializer(notes, many=True)
+        return Response(serializer.data)
 
 
 class EnrollmentViewSet(viewsets.ModelViewSet):

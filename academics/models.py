@@ -148,6 +148,88 @@ class CourseDocument(models.Model):
         verbose_name_plural = "Course Documents"
 
 
+class CourseNote(models.Model):
+    """
+    Model for static notes added by teachers for specific courses.
+    These are text-based notes explaining concepts, not file uploads.
+    """
+    NOTE_CATEGORIES = (
+        ('lecture', 'Lecture Notes'),
+        ('concept', 'Concept Explanation'),
+        ('tutorial', 'Tutorial'),
+        ('assignment', 'Assignment Guidelines'),
+        ('exam_prep', 'Exam Preparation'),
+        ('reference', 'Reference Material'),
+        ('announcement', 'Course Announcement'),
+        ('other', 'Other'),
+    )
+    
+    DIFFICULTY_LEVELS = (
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+    )
+    
+    title = models.CharField(max_length=255, help_text="Enter a descriptive title for the note")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='notes')
+    category = models.CharField(max_length=20, choices=NOTE_CATEGORIES, default='lecture',
+                               help_text="Categorize the type of note")
+    difficulty_level = models.CharField(max_length=15, choices=DIFFICULTY_LEVELS, default='beginner',
+                                       help_text="Difficulty level of the content")
+    content = models.TextField(help_text="Write your note content here")
+    tags = models.CharField(max_length=200, blank=True, null=True,
+                           help_text="Comma-separated tags (e.g., python, loops, functions)")
+    is_featured = models.BooleanField(default=False, help_text="Mark as featured to highlight important notes")
+    order = models.PositiveIntegerField(default=0, help_text="Order of display (lower numbers appear first)")
+    
+    # Metadata
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_notes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, help_text="Uncheck to hide this note from students")
+    
+    # Optional fields for better organization
+    chapter = models.CharField(max_length=100, blank=True, null=True,
+                              help_text="Chapter or section name (optional)")
+    estimated_read_time = models.PositiveIntegerField(blank=True, null=True,
+                                                     help_text="Estimated reading time in minutes")
+
+    def __str__(self):
+        return f"{self.title} - {self.course.title}"
+    
+    @property
+    def word_count(self):
+        """Calculate approximate word count of the note content"""
+        if self.content:
+            return len(self.content.split())
+        return 0
+    
+    @property
+    def tag_list(self):
+        """Return tags as a list"""
+        if self.tags:
+            return [tag.strip() for tag in self.tags.split(',')]
+        return []
+    
+    def save(self, *args, **kwargs):
+        # Auto-calculate estimated read time if not provided (average 200 words per minute)
+        if not self.estimated_read_time and self.content:
+            word_count = self.word_count
+            self.estimated_read_time = max(1, round(word_count / 200))
+        
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name = "Course Note"
+        verbose_name_plural = "Course Notes"
+        indexes = [
+            models.Index(fields=['course', 'category']),
+            models.Index(fields=['course', 'is_featured']),
+            models.Index(fields=['course', 'order']),
+        ]
+
+
 class StudentCourseEnrollment(models.Model):
     """
     Model to track student enrollments in courses

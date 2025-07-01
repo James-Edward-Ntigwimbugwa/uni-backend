@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Department, Course, CourseDocument, StudentCourseEnrollment
+from .models import CourseNote, Department, Course, CourseDocument, StudentCourseEnrollment
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -37,6 +37,21 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = ['id', 'name', 'code', 'description', 'logo', 
                   'courses', 'created_at', 'updated_at']
+        
+class CourseNoteSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source='course.title', read_only=True)
+    created_by_name = serializers.CharField(source='created_by.username', read_only=True)
+    tag_list = serializers.ReadOnlyField()
+    word_count = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = CourseNote
+        fields = ['id', 'title', 'course', 'course_title', 'category', 'difficulty_level',
+                 'content', 'tags', 'tag_list', 'is_featured', 'order', 'chapter',
+                 'estimated_read_time', 'word_count', 'created_by', 'created_by_name',
+                 'created_at', 'updated_at']
+        read_only_fields = ['created_by', 'word_count', 'estimated_read_time']
+
 
 
 class StudentCourseEnrollmentSerializer(serializers.ModelSerializer):

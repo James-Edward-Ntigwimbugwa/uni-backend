@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import Department, Course, CourseDocument, StudentCourseEnrollment
+from .models import CourseNote, Department, Course, CourseDocument, StudentCourseEnrollment
 
 
 class CourseDocumentInline(admin.TabularInline):
@@ -139,6 +139,30 @@ class StudentCourseEnrollmentAdmin(admin.ModelAdmin):
     
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('student', 'course', 'course__department')
+    
+@admin.register(CourseNote)
+class CourseNoteAdmin(admin.ModelAdmin):
+    list_display = ['title', 'course', 'category', 'difficulty_level', 'is_featured', 'created_at']
+    list_filter = ['category', 'difficulty_level', 'is_featured', 'course__department']
+    search_fields = ['title', 'content', 'tags']
+    readonly_fields = ['word_count', 'estimated_read_time']
+    ordering = ['course', 'order', '-created_at']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'course', 'category', 'difficulty_level')
+        }),
+        ('Content', {
+            'fields': ('content', 'tags', 'chapter')
+        }),
+        ('Display Options', {
+            'fields': ('is_featured', 'order', 'is_active')
+        }),
+        ('Metadata', {
+            'fields': ('created_by', 'estimated_read_time', 'word_count'),
+            'classes': ('collapse',)
+        })
+    )
 
 
 # Customize admin site headers

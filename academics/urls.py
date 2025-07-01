@@ -8,6 +8,7 @@ router.register(r'departments', views.DepartmentViewSet)
 router.register(r'courses', views.CourseViewSet)
 router.register(r'enrollments', views.EnrollmentViewSet)
 router.register(r'documents', views.CourseDocumentViewSet)
+router.register(r'notes', views.CourseNoteViewSet)
 
 # The API URLs are now determined automatically by the router
 urlpatterns = [
